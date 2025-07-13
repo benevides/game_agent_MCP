@@ -168,25 +168,16 @@ def pedir_mapa() -> str:
 
 @mcp.tool()
 def ver_imagem() -> str:
-    """Retorna a imagem para ser descrita"""
-    wall_color = (139, 69, 19)
-    open_color = (50, 50, 50)
-    player_color = (0, 255, 0)
-    reward_color = (255, 0, 0)
-    img = PILImage.new('RGB', (COLS * BLOCK_SIZE, ROWS * BLOCK_SIZE), (30, 30, 30))
-    draw = ImageDraw.Draw(img)
-    for y, row in enumerate(MAP_LAYOUT):
-        for x, cell in enumerate(row):
-            rect = [x * BLOCK_SIZE, y * BLOCK_SIZE, (x+1) * BLOCK_SIZE, (y+1) * BLOCK_SIZE]
-            if cell == '#':
-                draw.rectangle(rect, fill=wall_color)
-            else:
-                draw.rectangle(rect, fill=open_color)
-    px, py = game.player_pos
-    bx, by = game.block_pos
-    draw.rectangle([px * BLOCK_SIZE, py * BLOCK_SIZE, (px+1) * BLOCK_SIZE, (py+1) * BLOCK_SIZE], fill=player_color)
-    draw.rectangle([bx * BLOCK_SIZE, by * BLOCK_SIZE, (bx+1) * BLOCK_SIZE, (by+1) * BLOCK_SIZE], fill=reward_color)
-    
+    """Captura a tela atual do jogo, incluindo tela inicial, recompensa ou jogo."""
+    import pygame.surfarray
+    # A tela do pygame deve estar criada e visível
+    screen = pygame.display.get_surface()
+    if screen is None:
+        return "Tela não disponível."
+    # Captura a tela como array
+    arr = pygame.surfarray.array3d(screen)
+    # Transforma para PIL (precisa transpor e inverter eixo)
+    img = PILImage.fromarray(arr.swapaxes(0, 1))
     buffer = io.BytesIO()
     img.save(buffer, format="JPEG")
     img_bytes = buffer.getvalue()
