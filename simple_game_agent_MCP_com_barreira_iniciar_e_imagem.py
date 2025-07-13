@@ -4,9 +4,6 @@ import io
 import pygame #pip install pygame
 import random
 from mcp.server.fastmcp import FastMCP # pip install mcp
-from mcp.server.fastmcp import Image as Image_Fast
-from mcp.server.fastmcp.utilities.types import Image as Image_mcp
-from mcp.types import ImageContent
 import base64
 
 
@@ -17,9 +14,9 @@ MAP_LAYOUT_ORIGINAL = [
     "#OOOOOOOOO#",
     "#OOOPOOOOO#",
     "#OOOOOOOOO#",
-    "#######OOO#",
-    "#OOOOOOOOO#",
-    "#OOOROOOOO#",
+    "#OO#OOO#OO#",
+    "#OOO###OOO#",
+    "#OOOOOROOO#",
     "#OOOOOOOOO#",
     "#OOOOOOOOO#",
     "###########",
@@ -187,10 +184,14 @@ def ver_imagem() -> str:
 
 @mcp.tool()
 def iniciar_jogo() -> str:
-    """Inicia ou reinicia o jogo (igual ao botão Iniciar da tela)."""
-    game.reset()
-    game.start()
-    return "Jogo iniciado!"
+    """Inicia ou reinicia o jogo (igual ao botão Iniciar da tela). Só funciona na tela inicial ou de recompensa."""
+    if game.started:
+        return "O jogo já está em andamento. Só é possível iniciar na tela inicial ou após pegar a recompensa."
+    if not game.started or game.show_reward_screen:
+        game.reset()
+        game.start()
+        return "Jogo iniciado!"
+    return "Só é possível iniciar na tela inicial ou após pegar a recompensa."
 
 
 def main():
