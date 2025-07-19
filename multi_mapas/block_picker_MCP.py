@@ -209,6 +209,7 @@ def pedir_mapa() -> str:
 def ver_mapa_em_JPG() -> str:
     """Captura a tela atual do jogo no formato JPG, incluindo tela inicial, recompensa ou jogo."""
     import pygame.surfarray
+
     # A tela do pygame deve estar criada e visível
     screen = pygame.display.get_surface()
     if screen is None:
@@ -244,12 +245,19 @@ def main():
     clock = pygame.time.Clock()
     running = True
     brown = (139, 69, 19)
-    open_color = (50, 50, 50)
+    open_color = (34, 139, 34)  # verde grama
     font = pygame.font.SysFont(None, 32)
     button_rect = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2 - 40, 200, 80)
     dropdown_rect = pygame.Rect(10, 10, 200, 40)
     dropdown_open = False
     checkbox_rect = pygame.Rect(230, 10, 30, 30)
+    # Carrega imagens do player, recompensa e muralha
+    player_img = pygame.image.load("player.png")
+    player_img = pygame.transform.scale(player_img, (BLOCK_SIZE, BLOCK_SIZE))
+    recompensa_img = pygame.image.load("recompensa.png")
+    recompensa_img = pygame.transform.scale(recompensa_img, (BLOCK_SIZE, BLOCK_SIZE))
+    muralha_img = pygame.image.load("arvore.png")
+    muralha_img = pygame.transform.scale(muralha_img, (BLOCK_SIZE, BLOCK_SIZE))
 
     while running:
         for event in pygame.event.get():
@@ -349,13 +357,15 @@ def main():
                 for x, cell in enumerate(row):
                     rect = (x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE)
                     if cell == '#':
-                        pygame.draw.rect(screen, brown, rect)
+                        screen.blit(muralha_img, (x * BLOCK_SIZE, y * BLOCK_SIZE))
                     else:
                         pygame.draw.rect(screen, open_color, rect)
             px, py = game.player_pos
             bx, by = game.block_pos
-            pygame.draw.rect(screen, (0, 255, 0), (px * BLOCK_SIZE, py * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE))
-            pygame.draw.rect(screen, (255, 0, 0), (bx * BLOCK_SIZE, by * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE))
+            # Desenha imagem do player
+            screen.blit(player_img, (px * BLOCK_SIZE, py * BLOCK_SIZE))
+            # Desenha imagem da recompensa
+            screen.blit(recompensa_img, (bx * BLOCK_SIZE, by * BLOCK_SIZE))
             score_font = pygame.font.SysFont(None, 36)
             score_text = score_font.render(f'Score: {game.get_score()}', True, (255, 255, 255))
             screen.blit(score_text, (10, 10))
